@@ -6,8 +6,7 @@
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
 		"build": "tsc",
-		"start": "node .",
-		"postinstall": "patch-package"
+		"start": "node ."
 	},
 	"keywords": [],
 	"author": "",
