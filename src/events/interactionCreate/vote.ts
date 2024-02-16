@@ -1,7 +1,7 @@
 import { CommandKit } from "commandkit";
 import { ButtonInteraction, Client, Interaction } from "discord.js";
 
-import options from "../../schema/options";
+import options, { OptionPaths } from "../../schema/options";
 import { IPoll } from "../../schema/polls";
 
 import findOrCreateUser from "../../utilities/findOrCreateUser";
@@ -27,7 +27,7 @@ const vote = async (
 	const pollMsg = bi.message;
 
 	try {
-		const pollOption = await options
+		const option = await options
 			.findOne({
 				button_id: bi.customId,
 			})
@@ -35,14 +35,14 @@ const vote = async (
 				path: "option_poll",
 			})
 			.populate({
-				path: "option_participants",
+				path: OptionPaths.option_participants,
 			});
 
-		if (!pollOption) {
+		if (!option) {
 			return;
 		}
 
-		const foundPoll = pollOption.option_poll as IPoll;
+		const foundPoll = option.option_poll as IPoll;
 
 		if (!foundPoll) {
 			return;
@@ -62,15 +62,14 @@ const vote = async (
 			return;
 		}
 
-		const participantsInTheOption =
-			pollOption.option_participants as IUser[];
+		const participantsInTheOption = option.option_participants as IUser[];
 
 		const votedForThisBefore = participantsInTheOption.find(
 			participant => participant.user_id === foundUser.user_id
 		);
 
 		const otherVoted = await options.find({
-			_id: { $ne: pollOption._id },
+			_id: { $ne: option._id },
 			option_poll: foundPoll._id,
 			option_participants: { $in: [foundUser._id] },
 		});
@@ -82,13 +81,12 @@ const vote = async (
 			) {
 				foundPoll.total_votes -= 1;
 			}
-			pollOption.option_votes -= 1;
-			pollOption.option_participants =
-				pollOption.option_participants.filter(
-					participant => participant.user_id !== foundUser.user_id
-				);
+			option.option_votes -= 1;
+			option.option_participants = option.option_participants.filter(
+				participant => participant.user_id !== foundUser.user_id
+			);
 
-			await Promise.all([foundPoll.save(), pollOption.save()])
+			await Promise.all([foundPoll.save(), option.save()])
 				.then(() => {
 					logger.debug(
 						`➕ removed vote from user ${foundUser.user_id} for poll ${foundPoll.poll_id}`,
@@ -129,10 +127,9 @@ const vote = async (
 		) {
 			const otherOption = otherVoted[0];
 			otherOption.option_votes -= 1;
-			otherOption.option_participants =
-				pollOption.option_participants.filter(
-					participant => participant.user_id !== foundUser.user_id
-				);
+			otherOption.option_participants = option.option_participants.filter(
+				participant => participant.user_id !== foundUser.user_id
+			);
 
 			await Promise.all([foundPoll.save(), otherOption.save()])
 				.then(() => {
@@ -153,10 +150,10 @@ const vote = async (
 			foundPoll.total_votes += 1;
 		}
 
-		pollOption.option_votes += 1;
-		pollOption.option_participants.push(foundUser._id);
+		option.option_votes += 1;
+		option.option_participants.push(foundUser._id);
 
-		await Promise.all([foundPoll.save(), pollOption.save()])
+		await Promise.all([foundPoll.save(), option.save()])
 			.then(() => {
 				logger.debug(
 					`➕ registered vote from user ${foundUser.user_id} for poll ${foundPoll.poll_id}`,

@@ -10,13 +10,11 @@ import {
 	Guild,
 } from "discord.js";
 
-import users from "../../schema/users";
 import logger from "../../utilities/logger";
 import { getUserCount } from "../../utilities/getUserCount";
-import { IGuild } from "../../schema/guilds";
 import members, { MemberPaths } from "../../schema/members";
 
-const MAX_USERS_PER_PAGE = 2;
+const MAX_USERS_PER_PAGE = 5;
 
 const getRandomCircle = () => {
 	const emojis = ["🔴", "🟠", "🟡", "🟢", "🔵", "🟣", "🟤", "⚫", "⚪"];
@@ -37,7 +35,10 @@ const fetchPageString = async (g: Guild, pageNumber: number = 1) => {
 			})
 			.populate({
 				path: MemberPaths.user,
-			});
+			})
+			.sort({ n_word_count: -1 })
+			.skip((pageNumber - 1) * MAX_USERS_PER_PAGE)
+			.limit(MAX_USERS_PER_PAGE);
 
 		for (const m of memberships) {
 			pageString += `${getRandomCircle()} **${

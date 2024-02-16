@@ -55,12 +55,12 @@ export const pollsSchema = new Schema<IPoll>({
 	},
 	poll_guild: {
 		type: Schema.Types.ObjectId,
-		ref: "guildInfo",
+		ref: "guilds",
 		required: true,
 	},
 	poll_creator: {
 		type: Schema.Types.ObjectId,
-		ref: "user",
+		ref: "users",
 		required: true,
 	},
 	creation_date: {
@@ -85,7 +85,7 @@ export const pollsSchema = new Schema<IPoll>({
 	poll_options: [
 		{
 			type: Schema.Types.ObjectId,
-			ref: "pollOption",
+			ref: "options",
 			required: true,
 		},
 	],

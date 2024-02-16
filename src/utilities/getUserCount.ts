@@ -1,7 +1,5 @@
 import { Guild } from "discord.js";
 
-import users from "../schema/users";
-
 import findOrCreateGuild from "./findOrCreateGuild";
 import members from "../schema/members";
 

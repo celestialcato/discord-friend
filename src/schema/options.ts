@@ -23,7 +23,7 @@ export const optionsSchema = new Schema<IOption>({
 	},
 	option_poll: {
 		type: Schema.Types.ObjectId,
-		ref: "poll",
+		ref: "polls",
 	},
 	option_votes: {
 		type: Number,
