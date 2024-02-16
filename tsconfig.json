@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"strict": true,
+		"noImplicitAny": true,
+		"declaration": false,
+		"skipLibCheck": true,
+		"strictNullChecks": true,
+		"resolveJsonModule": true,
+		"outDir": "dist",
+		"sourceMap": true,
+		// "esModuleInterop": true
+	},
+	"include": [
+		"src"
+	],
+	"exclude": [
+		"node_modules"
+	],
+	"ts-node": {
+		"esm": true,
+	}
+}

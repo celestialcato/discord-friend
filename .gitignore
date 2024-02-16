@@ -1,0 +1,16 @@
+# folders containing artifacts
+
+/dist
+/node_modules
+/logs
+/.vscode
+
+# dev env
+
+*.code-workspace
+
+# secrets
+
+.env
+
+package-lock.json
