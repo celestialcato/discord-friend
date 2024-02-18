@@ -16,7 +16,7 @@ const options: LoggerOptions = {
 	write: true,
 	type: "log",
 	rotate: {
-		size: "10M",
+		size: "10G",
 		encoding: "utf8",
 	},
 	path: {
