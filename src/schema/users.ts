@@ -6,6 +6,7 @@ export interface IUser extends Document {
 	date_created: Date;
 	user_timezone: string;
 	user_profile_picture: string;
+	user_display_name: string;
 }
 
 export const usersSchema = new Schema<IUser>({
@@ -25,6 +26,9 @@ export const usersSchema = new Schema<IUser>({
 		type: String,
 	},
 	user_profile_picture: {
+		type: String,
+	},
+	user_display_name: {
 		type: String,
 	},
 });

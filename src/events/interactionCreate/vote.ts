@@ -88,13 +88,13 @@ const vote = async (
 
 			await Promise.all([foundPoll.save(), option.save()])
 				.then(() => {
-					logger.debug(
+					logger.docs(
 						`➕ removed vote from user ${foundUser.user_id} for poll ${foundPoll.poll_id}`,
 						"voteremove-ok"
 					);
 				})
 				.catch(error => {
-					logger.debug(
+					logger.error(
 						`❌ couldn't remove vote from user ${foundUser.user_id} for poll ${foundPoll.poll_id} : ${error}`,
 						"voteremove-fail"
 					);
@@ -133,13 +133,13 @@ const vote = async (
 
 			await Promise.all([foundPoll.save(), otherOption.save()])
 				.then(() => {
-					logger.debug(
+					logger.docs(
 						`➕ removed vote from user ${foundUser.user_id} for poll ${foundPoll.poll_id}`,
 						"voteremove-ok"
 					);
 				})
 				.catch(error => {
-					logger.debug(
+					logger.error(
 						`❌ couldn't remove vote from user ${foundUser.user_id} for poll ${foundPoll.poll_id} : ${error}`,
 						"voteremove-fail"
 					);
@@ -155,13 +155,13 @@ const vote = async (
 
 		await Promise.all([foundPoll.save(), option.save()])
 			.then(() => {
-				logger.debug(
+				logger.docs(
 					`➕ registered vote from user ${foundUser.user_id} for poll ${foundPoll.poll_id}`,
 					"voteadd-ok"
 				);
 			})
 			.catch(error => {
-				logger.debug(
+				logger.error(
 					`❌ couldn't register vote from user ${foundUser.user_id} for poll ${foundPoll.poll_id} : ${error}`,
 					"voteadd-fail"
 				);

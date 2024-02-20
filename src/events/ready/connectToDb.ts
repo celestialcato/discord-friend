@@ -8,9 +8,9 @@ const connectToDb = async () => {
 	try {
 		mongoose.set("strictQuery", false);
 		await mongoose.connect(`${process.env.MONGO_DB_CONNECTION_STRING}`, {});
-		logger.debug("🍃 connection to database established", "dbcon-ok");
+		logger.info("🍃 connection to database established", "dbcon-ok");
 	} catch (error) {
-		logger.debug(
+		logger.error(
 			"❌ connecting to database failed : ${error}",
 			"dbcon-fail"
 		);

@@ -25,8 +25,5 @@ export const run = async ({
 };
 
 export const options: CommandOptions = {
-	devOnly: true,
-	userPermissions: ["Administrator"],
-	botPermissions: ["AddReactions"],
 	deleted: false,
 };

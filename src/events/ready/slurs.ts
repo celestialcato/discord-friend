@@ -8,10 +8,11 @@ import {
 } from "discord.js";
 import { CommandKit } from "commandkit";
 
-import wiki from "wikijs";
+import wiki from "wikipedia";
 
 import logger from "../../utilities/logger";
-import guildInfo from "../../schema/guilds";
+import guilds, { GuildPaths } from "../../schema/guilds";
+import { IChannel } from "../../schema/channels";
 
 interface ISlur {
 	"term": string;
@@ -21,49 +22,45 @@ interface ISlur {
 	"references": string;
 }
 
-// const INTERVAL = 24 * 60 * 60 * 1000;
-
-const INTERVAL = 2 * 60 * 60 * 1000;
-
-// const INTERVAL = 30 * 60 * 1000;
-
-// const INTERVAL = 30000;
-
 const MAX_RETRIES = 3;
 
 const CURRENT_CHANNELS = new Map();
 
-export const addInterval = (client: Client<true>, channel_id: string) => {
-	if (!CURRENT_CHANNELS.has(channel_id)) {
-		logger.debug(
-			`➕ daily slurs were added for channel ${channel_id}`,
+export const addInterval = (
+	client: Client<true>,
+	channel: IChannel,
+	interval: number
+) => {
+	if (!CURRENT_CHANNELS.has(channel.channel_id)) {
+		logger.docs(
+			`➕ daily slurs were added for channel ${channel.channel_id}`,
 			"dailyslur-add"
 		);
 		const newInterval = setInterval(() => {
-			sendSlur(client, channel_id);
-		}, INTERVAL);
-		CURRENT_CHANNELS.set(channel_id, newInterval);
+			sendSlur(client, channel);
+		}, interval * 60 * 60 * 1000);
+		CURRENT_CHANNELS.set(channel.channel_id, newInterval);
 	}
 };
 
-export const removeInterval = (channel_id: string) => {
-	if (CURRENT_CHANNELS.has(channel_id)) {
-		logger.debug(
-			`➖ daily slurs were removed for channel ${channel_id}`,
+export const removeInterval = (channel: IChannel) => {
+	if (CURRENT_CHANNELS.has(channel.channel_id)) {
+		logger.docs(
+			`➖ daily slurs were removed for channel ${channel.channel_id}`,
 			"dailyslur-remove"
 		);
-		const channelInterval = CURRENT_CHANNELS.get(channel_id);
+		const channelInterval = CURRENT_CHANNELS.get(channel.channel_id);
 		clearInterval(channelInterval);
-		CURRENT_CHANNELS.delete(channel_id);
+		CURRENT_CHANNELS.delete(channel.channel_id);
 	}
 };
 
 const sendSlur = async (
 	client: Client<true>,
-	channel_id: string,
+	ch: IChannel,
 	retried?: number
 ) => {
-	const channel = client.channels.cache.get(channel_id) as TextChannel;
+	const channel = client.channels.cache.get(ch.channel_id) as TextChannel;
 
 	const authorIcon = new AttachmentBuilder(
 		path.join(
@@ -88,9 +85,12 @@ const sendSlur = async (
 		)
 	);
 
-	await wiki()
+	await wiki
 		.page("List_of_ethnic_slurs")
-		.then(page => page.tables())
+		.then(async page => {
+			const tables = await page.tables();
+			return tables;
+		})
 		.then(
 			(tables: Array<any>) =>
 				tables[Math.floor(Math.random() * tables.length)]
@@ -120,28 +120,34 @@ const sendSlur = async (
 				});
 			} catch (error) {
 				logger.error(
-					`failed to send the racial slur of the day in channel ${channel_id} : ${error}`
+					`failed to send the racial slur of the day in channel ${ch.channel_id} : ${error}`
 				);
 				if (!retried) {
-					sendSlur(client, channel_id, 1);
+					sendSlur(client, ch, 1);
 				} else if (retried > MAX_RETRIES) {
 					return;
 				} else {
-					sendSlur(client, channel_id, retried + 1);
+					sendSlur(client, ch, retried + 1);
 				}
 			}
 		});
 };
 
 const prepareGuilds = async (client: Client<true>) => {
-	const query = {
-		daily_slur: true,
-		daily_slur_channel: { $ne: null },
-	};
-	const guilds = await guildInfo.find(query);
-	for (const guild of guilds) {
-		guild.daily_slur_channel &&
-			addInterval(client, guild.daily_slur_channel);
+	const foundGuilds = await guilds.find({
+		slurs_active: true,
+		slurs_channel: { $ne: null },
+	});
+	for (const guild of foundGuilds) {
+		if (!guild.slurs_channel) {
+			continue;
+		}
+		await guild.populate({ path: GuildPaths.slurs_channel });
+		addInterval(
+			client,
+			guild.slurs_channel as IChannel,
+			guild.slurs_interval
+		);
 	}
 };
 

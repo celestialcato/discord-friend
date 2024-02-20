@@ -5,18 +5,21 @@ import logger from "./logger";
 const addGuildToDb = async (guild: Guild) => {
 	const newGuild = new guilds({
 		guild_id: guild.id,
+		guild_name: guild.name,
+		joining_date: new Date(),
+		guild_icon: guild.iconURL(),
 	});
 	await newGuild
 		.save()
 		.then(() => {
-			logger.debug(
-				`➕ added guild ${guild.id} to database`,
+			logger.docs(
+				`➕ added guild ${guild.id} / ${guild.name} to database`,
 				"addguild-ok"
 			);
 		})
-		.catch(e => {
+		.catch(error => {
 			logger.error(
-				`❌ couldn't add guild ${guild.id} to database: ${e}`,
+				`❌ couldn't add guild ${guild.id} / ${guild.name} to database: ${error}`,
 				"addguild-fail"
 			);
 			return null;

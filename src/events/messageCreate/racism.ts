@@ -2,10 +2,7 @@ import * as path from "path";
 import { EmbedBuilder, AttachmentBuilder, Message, Client } from "discord.js";
 import { CommandKit } from "commandkit";
 
-import { IGuild } from "../../schema/guilds";
-
-import findOrCreateUser from "../../utilities/findOrCreateUser";
-import findOrCreateMember from "../../utilities/findOrCreateMember";
+import { findOrCreateMemberUG } from "../../utilities/findOrCreateMember";
 
 import logger from "../../utilities/logger";
 import { MemberPaths } from "../../schema/members";
@@ -33,7 +30,7 @@ const racism = async (
 		const displayedTimes =
 			THREASHOLDS.get(`${message.author.id}-${message.guild.id}`) || 0;
 
-		const { foundMember } = await findOrCreateMember(
+		const { foundMember } = await findOrCreateMemberUG(
 			message.author,
 			message.guild
 		);

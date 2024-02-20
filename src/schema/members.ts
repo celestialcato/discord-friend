@@ -12,6 +12,8 @@ export interface IMember extends Document {
 	user: IUser["_id"];
 	n_word_count: number;
 	date_joined: Date;
+	nickname: string;
+	guild_profile_picture: string;
 }
 
 export const membersSchema = new Schema<IMember>({
@@ -32,6 +34,12 @@ export const membersSchema = new Schema<IMember>({
 	date_joined: {
 		type: Date,
 		default: Date.now,
+	},
+	nickname: {
+		type: String,
+	},
+	guild_profile_picture: {
+		type: String,
 	},
 });
 

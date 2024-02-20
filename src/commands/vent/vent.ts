@@ -16,6 +16,8 @@ import { CommandData, SlashCommandProps, CommandOptions } from "commandkit";
 import findOrCreateGuild from "../../utilities/findOrCreateGuild";
 
 import logger from "../../utilities/logger";
+import { GuildPaths } from "../../schema/guilds";
+import { IChannel } from "../../schema/channels";
 
 const HOTLINE_TRIGGER_WORDS = ["suicide", "kill", "harm", "dead", "death"];
 
@@ -103,7 +105,7 @@ const HOTLINE_NUMBERS = [
 ];
 
 export const data: CommandData = {
-	name: "anon_vent",
+	name: "vent",
 	description: "vent anonymously in the venting channel",
 	dm_permission: false,
 };
@@ -124,7 +126,7 @@ export const run = async ({
 			return;
 		}
 
-		if (!foundGuild.anon_vent) {
+		if (!foundGuild.vent_active) {
 			interaction.reply({
 				ephemeral: true,
 				content: "anonymous venting was turned off for this server",
@@ -140,8 +142,12 @@ export const run = async ({
 			return;
 		}
 
+		await foundGuild.populate({ path: GuildPaths.vent_channel });
+		const vent_channel = foundGuild.vent_channel as IChannel;
+		console.log(vent_channel);
+
 		const channel = client.channels.cache.get(
-			foundGuild.vent_channel
+			vent_channel.channel_id
 		) as TextChannel;
 
 		const text = new TextInputBuilder()

@@ -7,7 +7,7 @@ import {
 	SlashCommandBuilder,
 } from "discord.js";
 
-import findOrCreateMember from "../../utilities/findOrCreateMember";
+import { findOrCreateMemberUG } from "../../utilities/findOrCreateMember";
 
 import { MemberPaths } from "../../schema/members";
 import { IUser } from "../../schema/users";
@@ -46,7 +46,7 @@ export const run = async ({
 			return;
 		}
 
-		const { foundMember } = await findOrCreateMember(
+		const { foundMember } = await findOrCreateMemberUG(
 			pickedUser ? pickedUser : interaction.user,
 			interaction.guild
 		);

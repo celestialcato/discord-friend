@@ -16,7 +16,7 @@ const closePoll = async (c: Client, p: IPoll) => {
 		p.is_active = false;
 		p.save()
 			.then(() => {
-				logger.debug(`✔️ poll ${p.poll_id} was closed`, "pollclose-ok");
+				logger.docs(`✔️ poll ${p.poll_id} was closed`, "pollclose-ok");
 			})
 			.catch(error => {
 				throw error;
@@ -72,7 +72,7 @@ const closePoll = async (c: Client, p: IPoll) => {
 			});
 		}
 	} catch (error) {
-		logger.debug(
+		logger.error(
 			`❌ couldn't close poll ${p.poll_id} : ${error}`,
 			"pollclose-ok"
 		);

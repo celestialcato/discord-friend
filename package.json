@@ -21,7 +21,7 @@
 		"moment-timezone": "^0.5.45",
 		"mongoose": "^8.1.1",
 		"node-schedule": "^2.1.1",
-		"wikijs": "^6.4.1"
+		"wikipedia": "^2.1.2"
 	},
 	"devDependencies": {
 		"@types/node": "^20.11.17",

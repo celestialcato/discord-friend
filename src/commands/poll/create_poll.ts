@@ -15,13 +15,13 @@ import polls, { IPoll } from "../../schema/polls";
 import pollOptions, { IOption } from "../../schema/options";
 
 import findOrCreateUser from "../../utilities/findOrCreateUser";
+import findOrCreateGuild from "../../utilities/findOrCreateGuild";
 
 import logger from "../../utilities/logger";
 
 import { addPollJob } from "../../events/ready/loadPolls";
 
 import generatePollEmbed from "../../utilities/generatePollEmbed";
-import findOrCreateGuild from "../../utilities/findOrCreateGuild";
 
 const calculateDate = (
 	days: number | null,
@@ -59,7 +59,7 @@ const generateButtons = async (poll: IPoll, options: IOption[]) => {
 	const promises = options.map(option => option.save());
 	await Promise.all(promises)
 		.then(() => {
-			logger.debug(
+			logger.docs(
 				`➕ added button ids for poll ${poll.poll_id}`,
 				"polloptionsbuttonadd-ok"
 			);
@@ -385,7 +385,7 @@ export const run = async ({
 		await newPoll
 			.save()
 			.then(() => {
-				logger.debug(
+				logger.docs(
 					`➕ created a new ${type} poll in guild ${foundGuild.id} by user ${foundUser.id}`,
 					`poll${type}-ok`
 				);
@@ -454,7 +454,7 @@ export const run = async ({
 
 		await Promise.all(promisesArr)
 			.then(() => {
-				logger.debug(
+				logger.docs(
 					`➕ saved options for ${type} poll ${newPoll.poll_id}`,
 					"polloptsave-ok"
 				);
@@ -472,7 +472,7 @@ export const run = async ({
 		await newPoll
 			.save()
 			.then(() => {
-				logger.debug(
+				logger.docs(
 					`➕ added options to ${type} poll ${newPoll.poll_id}`,
 					"polloptadd-ok"
 				);
@@ -493,7 +493,7 @@ export const run = async ({
 			const poll_message_id = await sendPoll(interaction, row, embed);
 			newPoll.poll_message_id = poll_message_id;
 			await newPoll.save();
-			logger.debug(`✅ sent poll message for poll ${newPoll.poll_id}`);
+			logger.docs(`✅ sent poll message for poll ${newPoll.poll_id}`);
 			if (newPoll.closing_date) {
 				addPollJob(client, newPoll);
 			}

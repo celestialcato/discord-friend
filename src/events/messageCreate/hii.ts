@@ -32,7 +32,7 @@ const getRandomFile = () => {
 
 			return file;
 		} else {
-			logger.debug(
+			logger.warning(
 				"⚠️ no media was found in media folder for hii event",
 				"hiinomedia-warn"
 			);

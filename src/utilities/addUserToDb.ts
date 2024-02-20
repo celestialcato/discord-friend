@@ -9,12 +9,13 @@ const addUserToDb = async (u: User) => {
 		user_id: u.id,
 		user_username: u.username,
 		user_profile_picture: u.displayAvatarURL(),
+		user_display_name: u.displayName,
 	});
 
 	await newUser
 		.save()
 		.then(() => {
-			logger.debug(`➕ added user ${u.id} to database`, "adduser-ok");
+			logger.docs(`➕ added user ${u.id} to database`, "adduser-ok");
 		})
 		.catch(e => {
 			logger.error(

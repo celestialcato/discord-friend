@@ -1,12 +1,13 @@
 import { SlashCommandProps, CommandOptions } from "commandkit";
-import { SlashCommandBuilder, ChannelType } from "discord.js";
+import { SlashCommandBuilder, ChannelType, GuildChannel } from "discord.js";
 
 import findOrCreateGuild from "../../utilities/findOrCreateGuild";
 
 import logger from "../../utilities/logger";
+import findOrCreateChannel from "../../utilities/findOrCreateChannel";
 
 export const data = new SlashCommandBuilder()
-	.setName("anon_vent_control")
+	.setName("vent_control")
 	.setDescription("settings for anonymous venting functionality")
 	.setDMPermission(false)
 	.addBooleanOption(option =>
@@ -46,19 +47,32 @@ export const run = async ({
 			return;
 		}
 
+		let foundChannel = null;
+
+		if (pickedChannel) {
+			foundChannel = (
+				await findOrCreateChannel(pickedChannel as GuildChannel)
+			).foundChannel;
+
+			if (!foundChannel) {
+				return;
+			}
+		}
+
 		if (status) {
 			if (
 				pickedChannel &&
+				foundChannel &&
 				foundGuild.vent_channel &&
-				foundGuild.vent_channel === pickedChannel.id &&
-				foundGuild.anon_vent === true
+				String(foundGuild.vent_channel) === String(foundChannel._id) &&
+				foundGuild.vent_active === true
 			) {
 				interaction.editReply(
 					"anonymous venting was already activated on the mentioned channel!"
 				);
 				return;
 			}
-			if (pickedChannel === null && foundGuild.anon_vent === true) {
+			if (pickedChannel === null && foundGuild.vent_active === true) {
 				interaction.editReply(
 					"anonymous venting was already turned on!"
 				);
@@ -69,12 +83,10 @@ export const run = async ({
 					"you forgot to specify which channel you want the anonymous vents to be sent in!"
 				);
 				return;
-			} else if (foundGuild.vent_channel && pickedChannel) {
-				foundGuild.vent_channel = pickedChannel.id;
-			} else if (!foundGuild.vent_channel && pickedChannel) {
-				foundGuild.vent_channel = pickedChannel.id;
+			} else if (pickedChannel && foundChannel) {
+				foundGuild.vent_channel = foundChannel._id;
 			}
-			foundGuild.anon_vent = true;
+			foundGuild.vent_active = true;
 			await foundGuild.save().catch(e => {
 				logger.error(
 					`❌ couldn't update guildInfo ${foundGuild.guild_id}: ${e}`,
@@ -84,11 +96,11 @@ export const run = async ({
 			interaction.editReply("anonymous venting was turned on!");
 			return;
 		} else {
-			if (!foundGuild.anon_vent) {
+			if (!foundGuild.vent_active) {
 				interaction.editReply("anonymous venting was already off!");
 				return;
 			}
-			foundGuild.anon_vent = false;
+			foundGuild.vent_active = false;
 			await foundGuild.save().catch(e => {
 				logger.error(
 					`❌ couldn't update guildInfo ${foundGuild.guild_id}: ${e}`,

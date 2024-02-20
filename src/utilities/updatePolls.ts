@@ -20,7 +20,7 @@ const updatePolls = async (msg: Message, poll: IPoll) => {
 
 		await msg.edit({ embeds: [embed] });
 
-		logger.debug(
+		logger.docs(
 			`🔃 updated poll results for poll ${poll.poll_id}`,
 			"pollupdate-ok"
 		);

@@ -16,7 +16,7 @@ export const addPollJob = (c: Client, poll: IPoll) => {
 			closePoll(c, poll);
 		});
 		ACTIVE_TASKS.set(poll.poll_id, job);
-		logger.debug(
+		logger.docs(
 			`⌛ added closing task for poll ${poll.poll_id}`,
 			"polltask-ok"
 		);
@@ -34,7 +34,7 @@ export const removePollJob = (poll: IPoll) => {
 		if (job) {
 			job.cancel();
 			ACTIVE_TASKS.delete(poll.poll_id);
-			logger.debug(
+			logger.docs(
 				`🗑️ removed closing task for poll ${poll.poll_id}`,
 				"polltaskremove-ok"
 			);
