@@ -1,5 +1,5 @@
 {
-	"name": "bot-friend",
+	"name": "discord-friend",
 	"version": "0.1.0",
 	"description": "discord bot for friends",
 	"main": "dist/index.js",
