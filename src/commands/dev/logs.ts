@@ -28,7 +28,7 @@ const fetchLogs = async (fileName: string, n: number) => {
 };
 
 export const data = new SlashCommandBuilder()
-	.setName("show_logs")
+	.setName("logs")
 	.setDescription("shows bot's logs")
 	.addStringOption(option =>
 		option

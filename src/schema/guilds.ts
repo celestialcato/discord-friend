@@ -61,4 +61,6 @@ export const guildsSchema = new Schema<IGuild>({
 	},
 });
 
+export const removed_guilds = model<IGuild>("removed_guilds", guildsSchema);
+
 export default model<IGuild>("guilds", guildsSchema);

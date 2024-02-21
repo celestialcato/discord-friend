@@ -3,6 +3,7 @@ import { ChannelType, Client, Guild, GuildChannel } from "discord.js";
 import findOrCreateGuild from "../../utilities/findOrCreateGuild";
 import { findOrCreateMemberM } from "../../utilities/findOrCreateMember";
 import findOrCreateChannel from "../../utilities/findOrCreateChannel";
+import findOrCreateRole from "../../utilities/findOrCreateRole";
 
 const newGuild = async (
 	g: Guild,
@@ -12,6 +13,7 @@ const newGuild = async (
 	await findOrCreateGuild(g);
 	await g.members.fetch();
 	await g.channels.fetch();
+	await g.roles.fetch();
 	const membersCollection = g.members.cache;
 	const members = [...membersCollection.values()];
 	for (const member of members) {
@@ -27,6 +29,11 @@ const newGuild = async (
 			continue;
 		}
 		await findOrCreateChannel(channel as GuildChannel);
+	}
+	const rolesCollection = g.roles.cache;
+	const roles = [...rolesCollection.values()];
+	for (const role of roles) {
+		await findOrCreateRole(role);
 	}
 };
 

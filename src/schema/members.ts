@@ -1,10 +1,12 @@
 import { Schema, model } from "mongoose";
 import { IGuild } from "./guilds";
 import { IUser } from "./users";
+import { IRole } from "./roles";
 
 export const MemberPaths = {
 	guild: "guild",
 	user: "user",
+	member_roles: "member_roles",
 };
 
 export interface IMember extends Document {
@@ -14,6 +16,7 @@ export interface IMember extends Document {
 	date_joined: Date;
 	nickname: string;
 	guild_profile_picture: string;
+	member_roles: IRole["_id"][];
 }
 
 export const membersSchema = new Schema<IMember>({
@@ -41,6 +44,12 @@ export const membersSchema = new Schema<IMember>({
 	guild_profile_picture: {
 		type: String,
 	},
+	member_roles: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: "roles",
+		},
+	],
 });
 
 export default model<IMember>("members", membersSchema);

@@ -118,7 +118,7 @@ const sendPoll = async (
 };
 
 export const data = new SlashCommandBuilder()
-	.setName("create_poll")
+	.setName("poll")
 	.setDescription("create polls")
 	.setDMPermission(false)
 	.setDMPermission(false)

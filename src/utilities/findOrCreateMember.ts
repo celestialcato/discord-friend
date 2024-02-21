@@ -29,7 +29,7 @@ export const findOrCreateMemberUG = async (
 		exists = false;
 	}
 
-	return { foundMember, isNew, exists };
+	return { foundMember, foundUser, foundGuild, isNew, exists };
 };
 
 export const findOrCreateMemberM = async (
@@ -48,16 +48,20 @@ export const findOrCreateMemberM = async (
 	});
 
 	if (!foundMember && !dontadd) {
+		const rolesCollection = m.roles.cache;
+		const roles = [...rolesCollection.values()];
+
 		foundMember = await addMemberToDb(
 			foundUser,
 			foundGuild,
 			m.displayName,
-			m.displayAvatarURL()
+			m.displayAvatarURL(),
+			roles
 		);
 		isNew = true;
 	} else if (!foundMember && dontadd) {
 		exists = false;
 	}
 
-	return { foundMember, isNew, exists };
+	return { foundMember, foundUser, foundGuild, isNew, exists };
 };

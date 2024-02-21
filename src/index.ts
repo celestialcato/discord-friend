@@ -1,4 +1,5 @@
 import "dotenv/config";
+
 import * as path from "path";
 
 import { Client } from "discord.js";
